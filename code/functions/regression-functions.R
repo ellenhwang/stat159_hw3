@@ -21,7 +21,7 @@ r_squared <- function(regression_object) {
 
 # F-Statistic: Takes in lm() object and returns F-Statistic value
 f_statistic <- function(regression_object) {
-  summary(regression_object)$fstatistic
+  summary(regression_object)$fstatistic[1]
 }
 
 # Residual Standard Error (RSE): Takes in lm() object and returns RSE
