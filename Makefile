@@ -7,7 +7,7 @@ tests:
 	cd tests; Rscript -e “library(testthat); test_file(‘test-that.R’)”
 
 eda:
-	cd code/scripts; Rscript eda-script.R; rm Rplots.pdf
+	cd code/scripts; Rscript eda-script.R; rm Rplots.pdf; mv eda-output.txt ../../data
 
 regression:
 	cd code/scripts; Rscript regression-script.R; rm Rplots.pdf
