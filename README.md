@@ -2,13 +2,13 @@
 
 **Author**: Ellen Hwang
 
-**Project Description and Structure**: This assignment's purpose is to practice multiple regression functions in R and familiarize with a reproducible project structure. Makefile to compiles code, graphs, and report. This assignment is divided into code, data, images, and report.
+**Project Description and Structure**: This assignment's purpose is to practicing exloratory data analysis using regression functions in R and to familiarize with a reproducible project structure. Makefile to compiles code, graphs, and report. This assignment is divided into code, data, images, and report.
 
 **Steps**:
 
 1. git clone the repository
 2. `cd` into directory
-3. run Makefile
+3. run `make all` to execute all scripts and get all output
 
 
 
