@@ -12,9 +12,12 @@ advertising['X'] <- NULL
 # ************************************************
 # Regression
 # ************************************************
+lm_sales_TV <- lm(Sales ~ TV, data = advertising)
+lm_sales_Newspaper <- lm(Sales ~ Newspaper, data = advertising)
+lm_sales_Radio <- lm(Sales ~ Radio, data = advertising)
 mult_reg <- lm(Sales ~ TV + Newspaper + Radio, data = advertising)
 summary_mult_reg <- summary(mult_reg)
-save(mult_reg, summary_mult_reg, file = "../../data/regression.RData")
+save(advertising, lm_sales_TV, lm_sales_Newspaper, lm_sales_Radio, mult_reg, summary_mult_reg, file = "../../data/regression.RData")
 
 # ************************************************
 # Regression Scatter Plot
