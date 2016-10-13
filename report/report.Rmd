@@ -1,0 +1,101 @@
+---
+title: "Multiple Regression Analysis"
+author: "Ellen Hwang"
+date: "10/12/2016"
+output: pdf_document
+---
+# Abstract
+
+This report will be examining the applications of multiple regression analysis. We will also be looking into more methods of finding relationships among variables. I am using the Advertising dataset, taken from the webpage for the text, *An Introduction to Statistical Learning*, to perform this simple linear regression. This report will include a description of the data, methodology, and results for the multiple linear regression.
+
+
+# Introduction
+
+Multiple Linear Regression allows one to predict the relationship between one dependent variable and several independent variables. In this report, I was particularly examine the relationship the effect of *TV*, *Newspaper*, and *Radio* budgets on *Sales* revenues. I will discuss my methods in R, my various results, and conclusions about the relationships and statistics I find. 
+
+
+# Data 
+
+We will be working with the [Advertising dataset](http://www-bcf.usc.edu/~gareth/ISL/Advertising.csv). This dataset holds information for 200 different markes for 4 different variables: *Sales*, *TV*, *Newspaper*, and *Radio*. *Sales* represents the amount of units sold (in thousands). *TV*, *Newspaper*, and *Radio* each represent the advertising budget spent on those platforms. 
+
+
+# Methodology
+
+For running a regression, we using the `lm()` function. More specially, we regress *Sales* on *TV*, *Newspaper*, and *Radio* using this code: `lm(Sales ~ TV + Newspaper + Radio, data = advertising)`. The immediate output of this code is the estimated values on each coefficient and the constant value. Second, I use the `summary` function on the regression object to see further information about the coefficients , residuals, and other statistics.  
+
+\newpage
+
+# Results
+
+```{r, echo=FALSE}
+# loading all libraries, objects, and functions
+library(xtable)
+load('../data/regression.RData')
+load('../data/correlation-matrix.RData')
+source('../code/functions/regression-functions.R')
+options(xtable.comment = FALSE)
+
+```
+
+```{r, results= 'asis', echo = FALSE}
+xtable(correlation_matrix, caption = "Correlation Matrix for all Variables")
+```
+Prior to starting the analysis, it is good practice to examine the correlations among all variables. As part of the analysis, I will also answer a couple questions:
+
+1. Is at least one of the predictors useful in predicting the response?
+2. Do all predictors help to explain the response, or is only a subset of the 3 predictors useful?
+3. How well does the model fit the data?
+4. How accurate is the prediction?
+
+### 1. Is at least one of the predictors useful in predicting the response?
+
+```{r, results= 'asis', echo = FALSE}
+print(xtable(lm_sales_TV, caption = "Regressing Sales on TV"))
+```
+Based on the regression of Sales on TV, we found that TV is a statistically significant variable because it has a p-value of `r b <- summary(lm_sales_TV); round(b$coefficients['TV', 'Pr(>|t|)'], 4)` which is very close to zero. The R squared is `r round(r_squared(lm_sales_TV), 2)` meaning about `r paste(round(r_squared(lm_sales_TV)*100, 2), "%")` of the variance from the population regression line is explained by Radio. We can also see that the coefficient on TV is a postive value, meaning TV and Sales are positively correlated.
+
+```{r, results= 'asis', echo = FALSE}
+print(xtable(lm_sales_Newspaper, caption = "Regressing Sales on Newspaper"))
+```
+Based on the regression of Sales on Newspaper, we found that Newspaper is a statistically significant variable because it has a p-value of `r b <- summary(lm_sales_Newspaper); round(b$coefficients['Newspaper', 'Pr(>|t|)'], 4)` which is very close to zero. The R squared is `r round(r_squared(lm_sales_Newspaper),2)` meaning about `r paste(round(r_squared(lm_sales_Newspaper)*100, 2), "%")` of the variance from the population regression line is explained by Radio. We can also see that the coefficient on Newspaper is a postive value, meaning Newspaper and Sales are positively correlated.
+
+\newpage
+
+```{r, results= 'asis', echo = FALSE}
+print(xtable(lm_sales_Radio, caption = "Regressing Sales on Radio"))
+```
+Based on the regression of Sales on Radio, we found that Radio is not a statistically significant variable because it has a p-value of `r b <- summary(lm_sales_Radio); round(b$coefficients['Radio', 'Pr(>|t|)'], 4)` which is very close to zero. The R squared is `r round(r_squared(lm_sales_Radio), 2)` meaning about `r paste(round(r_squared(lm_sales_Radio)*100, 2), "%")` of the variance from the population regression line is explained by Radio. We can also see that the coefficient on Radio is a postive value, meaning Radio and Sales are positively correlated.
+
+Overall, we see that based on the individual regressions, at least one variable is useful in predicting the response.
+
+### 2. Do all predictors help to explain the response, or is only a subset of the predictors useful?
+
+```{r, results = 'asis', echo = FALSE}
+xtable(mult_reg, caption = "Regressing Sales on TV, Newspaper, and Radio")
+```
+
+When we run a regression on more than one variable, we find that not all predictors. Both TV and Radio have a p-value of less than .05 meaning they are statistically significant explanatory variables. On the other hand, Newspaper has a p-value of `r round(summary_mult_reg$coefficients['Newspaper', 'Pr(>|t|)'],2)`. This value is above the 0.05 threshold, meaning it is not a statistically significant explanatory variable. We can then conclude that only a subset of the predictors, TV and Radio, help explain the response.
+
+
+### 3. How well does the model fit the data?
+
+```{r, results='asis', echo=FALSE, cache=FALSE}
+further_stats <- data.frame(
+  Quantity = c("Residual standard error", "R squared", "F-statistic"),
+  Value = c(residual_std_error(mult_reg), r_squared(mult_reg), f_statistic(mult_reg))
+)
+xtable(further_stats, caption = "Strength of Relationships Statistics")
+```
+We can look to the R squared statistic and the residual standard error to examine this question. Our R squared is at about `r round(summary_mult_reg$r.squared, 2)`, meaning the variables explain about `r paste0(round(summary_mult_reg$r.squared, 2)*100, "%")` of the variance in Sales. The RSE is at about `r round(residual_std_error(mult_reg), 2)` meaning by dividing RSE by the Sales mean, we get the percentage error of `r paste0(round((residual_std_error(mult_reg)/mean(advertising$Sales)) * 100,2), "%")`.
+
+
+### 4. How accurate is the prediction?
+
+In this case, we would have to split the data into training, validation, and testing datasets to answer this question. Using various values for the explanatary variables, Radio, Newspaper, and TV, we would create several confidence intervals or prediction intervals. Subsequently, we would account for the number of predictions within these CIs or PIs to get our accuracy of the model. 
+
+
+# Conclusion
+
+From running multiple regression, we can observe the significance of each variable on the dependent variable. In our report, we found that although the F-statistic told us at least one of the explanatory variables would explain Sales, not all are statistically significant to the regression. Moving forward, we would need to remove Newspaper from the regression to get a better model R squared and RSE. This report has shown the ways we can answer important questions about data using multiple linear regression. 
+
+
